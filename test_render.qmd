@@ -1,0 +1,155 @@
+---
+title: "Homework 2"
+format: html
+editor: visual
+---
+
+## Task 1
+
+### Step 1: Create the vectors
+
+```{r}
+# Pre-treatment values
+
+pre = c(120, 151, 125, 126, 115, 132, 132, 129, 134, 139,
+
+         127, 122, 127, 135, 133, 128, 147, 138, 140, 132)
+
+# Post-treatment values
+
+post = c(127, 145, 135, 122, 115, 122, 123, 126, 126, 129,
+
+          132, 146, 120, 114, 121, 120, 128, 120, 133, 115)
+```
+
+### Step 2: Assign names
+
+```{r}
+names(pre)  = paste("Subject", 1:20, sep = "_")
+names(post) = paste("Subject", 1:20, sep = "_")
+```
+
+### Step 3: Calculate change in blood pressure
+
+```{r}
+# Difference = pre - post
+diff = pre - post
+diff
+```
+
+### Step 4: Average decrease across all patients
+
+```{r}
+mean(diff)
+```
+
+### Step 5: Identify patients with a decrease
+
+```{r}
+# Positive values = decrease
+decreased_patients =  which(diff > 0)
+names(decreased_patients) =  names(diff[diff > 0])
+decreased_patients
+```
+
+### Step 6: Subset only decreases
+
+```{r}
+decrease_values = diff[diff > 0]
+decrease_values
+```
+
+### Step 7: Average decrease for those with a positive change
+
+```{r}
+mean(decrease_values)
+```
+
+## Task 2
+
+### Step 1: Create a data frame
+
+```{r}
+bp_df = data.frame(
+  patient = paste("Subject", 1:20, sep = "_"),
+  pre_bp  = pre,
+  post_bp = post,
+  diff_bp = diff
+)
+```
+
+### Step 2: Return only rows where `diff_bp` is negative
+
+```{r}
+bp_df[bp_df$diff_bp < 0, ]
+# or
+subset(bp_df, diff_bp < 0)
+```
+
+### Step 3: Add a new column (`post_low`)
+
+```{r}
+bp_df$post_low = bp_df$post_bp < 120
+bp_df
+
+```
+
+### Step 4: Print 
+
+```{r}
+knitr::kable(bp_df)
+```
+
+## Task 3
+
+### Step 1: Create a new data frame for placebo data
+
+```{r}
+# Pre and post treatment values (placebo group)
+pre_placebo = c(138, 135, 147, 117, 152, 134, 114, 121, 131, 130)
+post_placebo = c(105, 136, 123, 130, 134, 143, 135, 139, 120, 124)
+
+# Calculate difference
+diff_placebo = pre_placebo - post_placebo
+
+# Create data frame
+placebo_df = data.frame(
+  patient  = paste("Subject", 1:10, sep = "_"),
+  pre_bp   = pre_placebo,
+  post_bp  = post_placebo,
+  diff_bp  = diff_placebo
+)
+
+# Add TRUE/FALSE column 
+placebo_df$post_low <- placebo_df$post_bp < 120
+placebo_df
+
+```
+
+### Step 2: Create a list with both data frames
+
+```{r}
+bp_list = list(treatment = bp_df, placebo = placebo_df)
+```
+
+### Step 3: Access the first list element in three different ways
+
+```{r}
+# Method 1: By name
+bp_list$treatment
+
+# Method 2: By double bracket index
+bp_list[[1]]
+
+# Method 3: By quoted name in double brackets
+bp_list[["treatment"]]
+```
+
+### Step 4: Access the `pre_bp` column of placebo in one line
+
+```{r}
+bp_list$placebo$pre_bp
+# or
+bp_list[["placebo"]][["pre_bp"]]
+
+```
